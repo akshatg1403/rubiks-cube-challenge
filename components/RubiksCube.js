@@ -1,16 +1,38 @@
-'use client'; 
+'use client';
 import React, { useState } from 'react';
+import styles from '../styles/RubiksCube.module.css';
 
 const COLORS = ['white', 'red', 'blue', 'orange', 'green', 'yellow'];
 const FACES = ['U', 'D', 'F', 'B', 'L', 'R'];
 
 const CubePiece = ({ position, colors }) => (
-  <div className="cube-piece" style={{
+  <div className={styles.cubePiece} style={{
     transform: `translate3d(${position[0]}px, ${position[1]}px, ${position[2]}px)`
   }}>
-    {colors.map((color, index) => (
-      <div key={index} className={`face face-${index}`} style={{ backgroundColor: color }} />
-    ))}
+    <div className={styles.face} style={{ 
+      transform: 'rotateX(90deg) translateZ(25px)',
+      backgroundColor: colors[0]
+    }} />
+    <div className={styles.face} style={{ 
+      transform: 'rotateY(90deg) translateZ(25px)',
+      backgroundColor: colors[1]
+    }} />
+    <div className={styles.face} style={{ 
+      transform: 'translateZ(25px)',
+      backgroundColor: colors[2]
+    }} />
+    <div className={styles.face} style={{ 
+      transform: 'rotateY(-90deg) translateZ(25px)',
+      backgroundColor: colors[3]
+    }} />
+    <div className={styles.face} style={{ 
+      transform: 'rotateY(180deg) translateZ(25px)',
+      backgroundColor: colors[4]
+    }} />
+    <div className={styles.face} style={{ 
+      transform: 'rotateX(-90deg) translateZ(25px)',
+      backgroundColor: colors[5]
+    }} />
   </div>
 );
 
@@ -37,7 +59,7 @@ const RubiksCube = () => {
     return initialState;
   });
 
-  const [rotation, setRotation] = useState({ x: -30, y: 45, z: 0 });
+  const [rotation, setRotation] = useState({ x: -25, y: 45, z: 0 });
   const [isRotating, setIsRotating] = useState(false);
   const [moveHistory, setMoveHistory] = useState([]);
 
@@ -66,26 +88,32 @@ const RubiksCube = () => {
           if (axis === 'x') {
             if (direction === 'clockwise') {
               [newPosition[1], newPosition[2]] = [newPosition[2], -newPosition[1]];
-              [newColors[0], newColors[2], newColors[5], newColors[4]] = [newColors[4], newColors[0], newColors[2], newColors[5]];
+              [newColors[0], newColors[2], newColors[5], newColors[4]] = 
+                [newColors[4], newColors[0], newColors[2], newColors[5]];
             } else {
               [newPosition[1], newPosition[2]] = [-newPosition[2], newPosition[1]];
-              [newColors[0], newColors[2], newColors[5], newColors[4]] = [newColors[2], newColors[5], newColors[4], newColors[0]];
+              [newColors[0], newColors[2], newColors[5], newColors[4]] = 
+                [newColors[2], newColors[5], newColors[4], newColors[0]];
             }
           } else if (axis === 'y') {
             if (direction === 'clockwise') {
               [newPosition[0], newPosition[2]] = [-newPosition[2], newPosition[0]];
-              [newColors[1], newColors[2], newColors[3], newColors[4]] = [newColors[4], newColors[1], newColors[2], newColors[3]];
+              [newColors[1], newColors[2], newColors[3], newColors[4]] = 
+                [newColors[4], newColors[1], newColors[2], newColors[3]];
             } else {
               [newPosition[0], newPosition[2]] = [newPosition[2], -newPosition[0]];
-              [newColors[1], newColors[2], newColors[3], newColors[4]] = [newColors[2], newColors[3], newColors[4], newColors[1]];
+              [newColors[1], newColors[2], newColors[3], newColors[4]] = 
+                [newColors[2], newColors[3], newColors[4], newColors[1]];
             }
           } else if (axis === 'z') {
             if (direction === 'clockwise') {
               [newPosition[0], newPosition[1]] = [newPosition[1], -newPosition[0]];
-              [newColors[0], newColors[1], newColors[5], newColors[3]] = [newColors[3], newColors[0], newColors[1], newColors[5]];
+              [newColors[0], newColors[1], newColors[5], newColors[3]] = 
+                [newColors[3], newColors[0], newColors[1], newColors[5]];
             } else {
               [newPosition[0], newPosition[1]] = [-newPosition[1], newPosition[0]];
-              [newColors[0], newColors[1], newColors[5], newColors[3]] = [newColors[1], newColors[5], newColors[3], newColors[0]];
+              [newColors[0], newColors[1], newColors[5], newColors[3]] = 
+                [newColors[1], newColors[5], newColors[3], newColors[0]];
             }
           }
           
@@ -111,8 +139,10 @@ const RubiksCube = () => {
       scrambleMoves.push({ face: randomFace, direction: randomDirection });
     }
 
-    scrambleMoves.forEach(move => {
-      rotateFace(move.face, move.direction);
+    scrambleMoves.forEach((move, index) => {
+      setTimeout(() => {
+        rotateFace(move.face, move.direction);
+      }, index * 600);
     });
   };
 
@@ -142,132 +172,50 @@ const RubiksCube = () => {
   };
 
   return (
-    <div className="game-background">
-      <div className="rubiks-cube-container">
-        <div className="glitch-title">Akshat's Cube Challenge</div>
-        <style jsx>{`
-          .game-background {
-            background: linear-gradient(45deg, #0a192f, #112240);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            font-family: 'Orbitron', sans-serif;
-          }
-          .glitch-title {
-            text-align: center;
-            color: #64ffda;
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-shadow: 
-              0 0 5px #64ffda,
-              0 0 15px #64ffda;
-            animation: glitch 1s infinite;
-          }
-          @keyframes glitch {
-            0% { text-shadow: 0 0 5px #64ffda; }
-            50% { text-shadow: 0 0 10px #64ffda, -2px 0 #64ffda; }
-            100% { text-shadow: 0 0 5px #64ffda, 2px 0 #64ffda; }
-          }
-          .rubiks-cube-container {
-            perspective: 1000px;
-            width: 300px;
-            background: rgba(17, 34, 64, 0.8);
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 
-              0 0 10px #64ffda,
-              0 0 20px #112240;
-            backdrop-filter: blur(10px);
-          }
-          .rubiks-cube {
-            width: 100%;
-            height: 300px;
-            position: relative;
-            transform-style: preserve-3d;
-            transition: transform 0.5s;
-          }
-          .cube-piece {
-            position: absolute;
-            width: 50px;
-            height: 50px;
-            transition: transform 0.5s;
-            transform-style: preserve-3d;
-          }
-          .face {
-            position: absolute;
-            width: 48px;
-            height: 48px;
-            border: 1px solid #64ffda;
-            opacity: 0.9;
-            box-shadow: 0 0 5px #64ffda;
-          }
-          .face-0 { transform: rotateX(90deg) translateZ(25px); }
-          .face-1 { transform: rotateY(90deg) translateZ(25px); }
-          .face-2 { transform: translateZ(25px); }
-          .face-3 { transform: rotateY(-90deg) translateZ(25px); }
-          .face-4 { transform: rotateY(180deg) translateZ(25px); }
-          .face-5 { transform: rotateX(-90deg) translateZ(25px); }
-          .controls {
-            margin-top: 20px;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-          }
-          button {
-            padding: 8px 15px;
-            background-color: #64ffda;
-            color: #0a192f;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            box-shadow: 0 0 10px rgba(100, 255, 218, 0.5);
-          }
-          button:hover {
-            background-color: #0a192f;
-            color: #64ffda;
-            box-shadow: 0 0 15px rgba(100, 255, 218, 0.7);
-          }
-          .move-history {
-            margin-top: 10px;
-            height: 50px;
-            overflow-y: auto;
-            text-align: center;
-            color: #64ffda;
-            font-family: 'Courier New', monospace;
-          }
-        `}</style>
-        <div className="rubiks-cube" style={{
-          transform: `rotateX(${rotation.x}deg) rotateY(${rotation.y}deg) rotateZ(${rotation.z}deg)`
-        }}>
-          {cubeState.map((piece, index) => (
-            <CubePiece key={index} position={piece.position.map(p => p * 55)} colors={piece.colors} />
-          ))}
+    <div className={styles.gameContainer}>
+      <div className={styles.cubeContainer}>
+        <h1 className={styles.title}>Akshat's Cube Challenge</h1>
+        
+        <div className={styles.cubeWrapper}>
+          <div className={styles.cube} style={{
+            transform: `rotateX(${rotation.x}deg) rotateY(${rotation.y}deg) rotateZ(${rotation.z}deg)`
+          }}>
+            {cubeState.map((piece, index) => (
+              <CubePiece 
+                key={index} 
+                position={piece.position.map(p => p * 55)} 
+                colors={piece.colors} 
+              />
+            ))}
+          </div>
         </div>
-        <div className="controls">
-          {['U', 'D', 'F', 'B', 'L', 'R'].map(face => (
+
+        <div className={styles.controls}>
+          {FACES.map(face => (
             <div key={face}>
-              <button onClick={() => rotateFace(face, 'clockwise')}>
+              <button 
+                className={styles.button} 
+                onClick={() => rotateFace(face, 'clockwise')}
+              >
                 {face}
               </button>
-              <button onClick={() => rotateFace(face, 'counterclockwise')}>
+              <button 
+                className={styles.button} 
+                onClick={() => rotateFace(face, 'counterclockwise')}
+              >
                 {face}'
               </button>
             </div>
           ))}
-          <div>
-            <button onClick={scrambleCube}>Scramble</button>
-            <button onClick={resetCube}>Reset</button>
-          </div>
+          <button className={styles.button} onClick={scrambleCube}>
+            Scramble
+          </button>
+          <button className={styles.button} onClick={resetCube}>
+            Reset
+          </button>
         </div>
-        <div className="move-history">
+
+        <div className={styles.moveHistory}>
           <strong>Moves:</strong> {moveHistory.map((move, index) => 
             `${move.face}${move.direction === 'counterclockwise' ? "'" : ''} `
           )}
